@@ -15,8 +15,8 @@ local remove = table.remove
 local config = require "disbucket.config"
 local len = utf8.len
 local rate = config.rate
-local messageFormat = config.messageFormat
-local tellraw = config.tellraw
+local messageFormat = config.messageFormat or "```ansi\n%s\n```"
+local tellraw = config.tellraw or "tellraw @a [{\"color\":\"green\",\"text\":\"[@%s]\"},{\"color\":\"white\",\"text\":\" %s\"}]"
 
 -- spawn new process
 args[0] = nil
