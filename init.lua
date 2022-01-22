@@ -53,7 +53,7 @@ local colors = {
     [".-issued server command:.-"] = "\27[32;1m%s\27[0m";
     [".-joined the game.-"] = "\27[33;1m%s\27[0m";
     [".-left the game.-"] = "\27[33;1m%s\27[0m";
-    [".- INFO%]: %[.-%].-"] = "\27[32;1m%s\27[0m";
+    ["(%[.- INFO%]: )(%[.-%])(.-)"] = "%s\27[47;1m%s\27[0m%s";
 }
 
 ---check permission function
@@ -86,8 +86,8 @@ client:once('ready', function ()
 
     local function writeMessage(str)
         for pattern,format in pairs(colors) do
-            str = str:gsub(pattern,function (this)
-                return format:format(this)
+            str = str:gsub(pattern,function (...)
+                return format:format(...)
             end)
         end
 
