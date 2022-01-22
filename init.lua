@@ -7,18 +7,13 @@ local readline = require "readline"
 local discordia = require "discordia"
 local utf8 = require "utf8"
 local timer = require "timer"
--- local uv = require "uv"
 
 -- make objects
 local client = discordia.Client() ---@type Client
 local editor = readline.Editor.new()
 local remove = table.remove
-local insert = table.insert
 local config = require "disbucket.config"
 local len = utf8.len
--- local hrtime = uv.hrtime
--- local secOffset = 1000000000
--- local rateLimit = 0.02 * secOffset
 local rate = config.rate
 local messageFormat = config.messageFormat
 
@@ -48,6 +43,7 @@ local stdout = prettyPrint.stdout
 local stdoutWrite = stdout.write
 local function printOut(str)
     stdoutWrite(stdout,{"\27[2K\r\27[0m",str,"> "})
+    editor:refreshLine()
 end
 
 ---check permission function
@@ -121,9 +117,14 @@ client:once('ready', function ()
         message:delete() -- 유저 메시지를 지운다
         timer.setTimeout(rate,messageMutex.unlock,messageMutex) -- 디스코드 리밋 레이트 후 잠금 해재한다
 
-        -- 명령 기록을 남기고 실행한다
-        writeMessage(("\27[35mDiscord user '%s' executed '%s'\27[0m\n"):format(member.nickname,content))
-        promise.spawn(proStdinWrite,{content,"\n"})
+        if content:sub(1,1) == "/" then -- 명령어이면
+            -- 명령 기록을 남기고 실행한다
+            writeMessage(("\27[35mDiscord user '%s' executed '%s'\27[0m\n"):format(member.nickname,content))
+            promise.spawn(proStdinWrite,{content,"\n"})
+        else
+            writeMessage(("\27[35m@%s %s]\27[0m\n"):format(member.name,content))
+            promise.spawn(proStdinWrite,{"tellraw @a \"%s\"",content:gsub("\"","\\\""),"\n"})
+        end
     end
     client:on('messageCreate',discordInput)
 
