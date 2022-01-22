@@ -46,14 +46,28 @@ local function printOut(str)
     editor:refreshLine()
 end
 
+-- colors
+local colors = {
+    [".-issued server command:.-"] = "\27[32;1m%s\27[0m";
+    [".-joined the game.-"] = "\27[33;1m%s\27[0m";
+    [".-left the game.-"] = "\27[33;1m%s\27[0m";
+    [".- INFO%]: %[.-%].-"] = "\27[32;1m%s\27[0m";
+}
+
 ---check permission function
 client:once('ready', function ()
     local messageMutex = mutex.new()
     local channel = client:getChannel(config.channelId) ---@type TextChannel
     local guild = client:getGuild(config.guildId)
     local role = guild:getRole(config.roleId)
-    local lastMessage ---@type Message
     local lastStr = ""
+    local lastMessage = channel:getLastMessage() ---@type Message
+    if lastMessage and lastMessage.author ~= client.user then
+        lastMessage = nil
+    end
+    if lastMessage then
+        lastStr = lastMessage.content:match("```ansi\n(.+)```")
+    end
     local buffer = {}
 
     local function rawWriteMessage(str) -- 리밋 레이트 생각 없이 2000 자 제한만 지켜 메시지 쓰기
@@ -69,6 +83,12 @@ client:once('ready', function ()
     end
 
     local function writeMessage(str)
+        for pattern,format in pairs(colors) do
+            str = str:gsub(pattern,function (this)
+                return format:format(this)
+            end)
+        end
+
         -- stdout
         printOut(str) -- stdout 에 뿌린다
 
@@ -106,7 +126,7 @@ client:once('ready', function ()
     local function discordInput(message) -- 메시지 들어옴 함수
         -- 메시지 오브젝트 필드를 확인한다
         local member = message.member
-        if (not member) or (member.bot) or (not member:hasRole(role)) then return end
+        if (not member) or (member.bot) then return end
         local messageChannel = message.channel
         if (not messageChannel) or messageChannel ~= channel then return end
         local content = message.content
@@ -121,12 +141,19 @@ client:once('ready', function ()
             -- 명령 기록을 남기고 실행한다
             writeMessage(("\27[35mDiscord user '%s' executed '%s'\27[0m\n"):format(member.nickname,content))
             promise.spawn(proStdinWrite,{content,"\n"})
-        else
+        elseif member:hasRole(role) then
             writeMessage(("\27[35m@%s %s]\27[0m\n"):format(member.name,content))
             promise.spawn(proStdinWrite,{"tellraw @a \"%s\"",content:gsub("\"","\\\""),"\n"})
         end
     end
     client:on('messageCreate',discordInput)
+
+    local function discordDelete(message)
+        if lastMessage == message then
+            lastMessage = nil
+        end
+    end
+    client:on('messageDelete',discordDelete)
 
     -- print stdout and stderr
     local waitter = promise.waitter()
@@ -142,8 +169,9 @@ client:once('ready', function ()
     end))
     waitter:wait()
     process.waitExit()
+    writeMessage("\27[31;1m[ 서버가 종료되었습니다 ]\27[0m")
     stdoutWrite(stdout,"\27[2K\r\27[0m[ Process Stopped ]\n")
-    os.exit()
+    timer.setTimeout(1000,os.exit)
 end)
 
 client:run(("Bot %s"):format(config.token))
