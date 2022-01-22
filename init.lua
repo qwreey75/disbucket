@@ -16,6 +16,7 @@ local config = require "disbucket.config"
 local len = utf8.len
 local rate = config.rate
 local messageFormat = config.messageFormat
+local tellraw = config.tellraw
 
 -- spawn new process
 args[0] = nil
@@ -126,7 +127,8 @@ client:once('ready', function ()
     local function discordInput(message) -- 메시지 들어옴 함수
         -- 메시지 오브젝트 필드를 확인한다
         local member = message.member
-        if (not member) or (member.bot) then return end
+        local author = message.author
+        if (not author) or (not member) or (member.bot) then return end
         local messageChannel = message.channel
         if (not messageChannel) or messageChannel ~= channel then return end
         local content = message.content
@@ -142,8 +144,9 @@ client:once('ready', function ()
             writeMessage(("\27[35mDiscord user '%s' executed '%s'\27[0m\n"):format(member.nickname,content))
             promise.spawn(proStdinWrite,{content,"\n"})
         elseif member:hasRole(role) then
-            writeMessage(("\27[35m@%s %s]\27[0m\n"):format(member.name,content))
-            promise.spawn(proStdinWrite,{"tellraw @a \"%s\"",content:gsub("\"","\\\""),"\n"})
+            local name = author.name
+            writeMessage(("\27[35m[@%s] %s\27[0m\n"):format(name,content))
+            promise.spawn(proStdinWrite,{tellraw:format(name,content:gsub("\"","\\\"")),"\n"})
         end
     end
     client:on('messageCreate',discordInput)
@@ -156,7 +159,7 @@ client:once('ready', function ()
     client:on('messageDelete',discordDelete)
 
     -- print stdout and stderr
-    writeMessage("\27[32;1m[ 서버가 시작되었습니다 ]\27[0m")
+    writeMessage("\27[32;1m[ 서버가 시작되었습니다 ]\27[0m\n")
     local waitter = promise.waitter()
     waitter:add(promise.new(function ()
         for str in process.stdout.read do
@@ -170,7 +173,7 @@ client:once('ready', function ()
     end))
     waitter:wait()
     process.waitExit()
-    writeMessage("\27[31;1m[ 서버가 종료되었습니다 ]\27[0m")
+    writeMessage("\27[31;1m[ 서버가 종료되었습니다 ]\27[0m\n")
     stdoutWrite(stdout,"\27[2K\r\27[0m[ Process Stopped ]\n")
     timer.setTimeout(1000,os.exit)
 end)
