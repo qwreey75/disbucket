@@ -156,6 +156,7 @@ client:once('ready', function ()
     client:on('messageDelete',discordDelete)
 
     -- print stdout and stderr
+    writeMessage("\27[32;1m[ 서버가 시작되었습니다 ]\27[0m")
     local waitter = promise.waitter()
     waitter:add(promise.new(function ()
         for str in process.stdout.read do
