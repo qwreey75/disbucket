@@ -49,6 +49,7 @@ end
 
 -- colors
 local colors = {
+    ["%[.-:.-:.- WARN%]:.-"] = "\27[33;1m%s\27[0m";
     [".-issued server command:.-"] = "\27[32;1m%s\27[0m";
     [".-joined the game.-"] = "\27[33;1m%s\27[0m";
     [".-left the game.-"] = "\27[33;1m%s\27[0m";
