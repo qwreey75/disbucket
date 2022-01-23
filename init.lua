@@ -63,7 +63,7 @@ local colors = {
     [".-issued server command:.-"] = "\27[32;1m%s\27[0m";
     [".-joined the game.-"] = "\27[33;1m%s\27[0m";
     [".-left the game.-"] = "\27[33;1m%s\27[0m";
-    ["(%[.- INFO%]: )(%[.-%])(.-)"] = "%s\27[47;1m%s\27[0m%s";
+    ["(%[.- INFO%]: )(%[.+%])(.-)"] = "%s\27[47;1m%s\27[0m%s";
 }
 
 ---check permission function
