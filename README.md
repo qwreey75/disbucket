@@ -61,8 +61,9 @@ And add disbucket.json on server directory
                     // messages to check role/permission
   "noColor":false, // OPTION, you can turn off colorfy output, it will help you use other program
                    // (This option not remove stdout's ansi escape)
-  "stop":"stop" // OPTION, If your program uses other stop command, you can use these command
-                // it will executed when ctrl+C pressed
+  "stop":"stop", // OPTION, If your program uses other stop command, you can use these command
+                 // it will executed when ctrl+C pressed
+  "prompt":"> " // OPTION, prompt string, you can change this if you need
 }
 ```
 (Your server directory will like be)

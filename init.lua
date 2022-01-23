@@ -31,6 +31,7 @@ local rate = config.rate or 20
 local rawInput = config.rawInput
 local noColor = config.noColor
 local stop = config.stop or "stop"
+local prompt = config.prompt or "> "
 local messageFormat = config.messageFormat or "```ansi\n%s\n```"
 local tellraw = config.tellraw or "[{\"color\":\"green\",\"text\":\"[@%s]\"},{\"color\":\"white\",\"text\":\" %s\"}]"
 local command = config.command or "[{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]"
@@ -59,15 +60,15 @@ local function onCommand(err,line,out)
         return
     end
     promise.spawn(proStdinWrite,{line,"\n"})
-    editor:readLine("> ",onCommand)
+    editor:readLine(prompt,onCommand)
 end
-editor:readLine("> ",onCommand)
+editor:readLine(prompt,onCommand)
 
 -- print function
 local stdout = prettyPrint.stdout
 local stdoutWrite = stdout.write
 local function printOut(str)
-    stdoutWrite(stdout,{"\27[2K\r\27[0m",str,"> "})
+    stdoutWrite(stdout,{"\27[2K\r\27[0m",str,prompt})
     editor:refreshLine()
 end
 
