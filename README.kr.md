@@ -29,6 +29,33 @@
 ```sh
 git clone https://github.com/qwreey75/disbucket.git
 ```
+그리고 disbucket.json 파일을 서버 디렉터리에 만듭니다
+```json
+{
+  "token":"You bot token", // 디스코드 봇의 토큰입니다
+  "roleId":"id", // 커맨드를 실행 할 수 있는 롤입니다
+  "guildId":"id", // 로깅/읽기될 서버입니다
+  "channelId":"id", // 로깅/읽기 될 채널입니다
+  "rate":20, // 옵션, 적용될 디스코드 리미트 레이트입니다 (무엇인지 모른다면 건들지 마세요)
+  "messageFormat":"```ansi\n%s\n```", // 옵션, 디스코드에 로그될 포멧입니다
+  "tellraw":"[{\"color\":\"green\",\"text\":\"[@%s]\"},{\"color\":\"white\",\"text\":\" %s\"}]",
+            // 옵션, 디스코드 메시지가 인게임에 표시될 포멧입니다, tellraw 문법을 따릅니다
+            // 첫째 %s 는 이름으로 대채됩니다, 둘째 %s 는 메시지로 대채됩니다
+  "command":"[{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]"
+            // 옵션, 디스코드의 커맨드 실행이 인게임에 표시될 포멧입니다, tellraw 문법을 따릅니다
+            // 첫째 %s 는 이름으로 대채됩니다, 둘째 %s 는 명령어로 대채됩니다
+}
+```
+(올바른 서버 폴더의 내용은 이렇게 됩니다)
+```sh
+ - Minecraft Server
+ | - Bucket.jar (Paper, Spigot ...)
+ | - disbucket.json (disbucket settings)
+ | - disbucket (disbucket folder)
+ | - luvit.exe or luvit (option, you can put it on
+ |                       other path)
+ | - ... (world , permission , ...)
+```
 그 다음 서버 폴더에서  
 ```sh
 luvit disbucket -jar ...
