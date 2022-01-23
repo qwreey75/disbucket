@@ -187,10 +187,10 @@ client:once('ready', function ()
             content = content:sub(2,-1)
             writeMessage(("\27[35mDiscord user '%s' executed '%s'\27[0m\n"):format(name,content))
             promise.spawn(proStdinWrite,{content,"\n"})
-            promise.spawn(proStdinWrite,{command:format(name,content:gsub("\"","\\\"")),"\n"})
+            promise.spawn(proStdinWrite,{command:format(name,content:gsub("\\","\\\\"):gsub("\"","\\\"")),"\n"})
         elseif member:hasRole(role) then
             writeMessage(("\27[35m[@%s] %s\27[0m\n"):format(name,content))
-            promise.spawn(proStdinWrite,{tellraw:format(name,content:gsub("\"","\\\"")),"\n"})
+            promise.spawn(proStdinWrite,{tellraw:format(name,content:gsub("\\","\\\\"):gsub("\"","\\\"")),"\n"})
         end
     end
     client:on('messageCreate',discordInput)
