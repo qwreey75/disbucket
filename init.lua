@@ -7,7 +7,6 @@ local readline = require "readline"
 local discordia = require "discordia"
 local utf8 = require "utf8"
 local timer = require "timer"
-local uv = require "uv"
 local fs = require "fs"
 local json = require "json"
 
@@ -20,18 +19,20 @@ local config = configFile and json.decode(configFile) or require "./config"
 local len = utf8.len
 local rate = config.rate
 local messageFormat = config.messageFormat or "```ansi\n%s\n```"
-local tellraw = config.tellraw or "tellraw @a [{\"color\":\"green\",\"text\":\"[@%s]\"},{\"color\":\"white\",\"text\":\" %s\"}]"
-local command = config.command or "tellraw @a [{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]"
+local tellraw = config.tellraw or "[{\"color\":\"green\",\"text\":\"[@%s]\"},{\"color\":\"white\",\"text\":\" %s\"}]"
+local command = config.command or "[{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]"
+tellraw = "tellraw @a " .. tellraw
+command = "tellraw @a " .. command
 
 -- spawn new process
 args[0] = nil
 remove(args,1)
 local process = spawn("java",{
     stdio = {
-	-- uv.new_tty(0, true),
-	-- uv.new_tty(1, false),
-	-- uv.new_tty(2, false)
-	true,true,true
+        -- uv.new_tty(0, true),
+        -- uv.new_tty(1, false),
+        -- uv.new_tty(2, false)
+        true,true,true
     };
     cwd = "./";
     args = args;
@@ -95,13 +96,13 @@ client:once('ready', function ()
     end
 
     local function bufferClear(now,callback,...)
-	for _,str in ipairs(now) do
-	    rawWriteMessage(str)
-	    timer.sleep(rate)
-	end
-	if callback then
-	    callback(...)
-	end
+        for _,str in ipairs(now) do
+            rawWriteMessage(str)
+            timer.sleep(rate)
+        end
+        if callback then
+            callback(...)
+        end
     end
     local function writeMessage(str)
         for pattern,format in pairs(colors) do
@@ -156,15 +157,15 @@ client:once('ready', function ()
         message:delete() -- 유저 메시지를 지운다
         timer.setTimeout(rate,messageMutex.unlock,messageMutex) -- 디스코드 리밋 레이트 후 잠금 해재한다
 
-	local name = author.name
-	if content:match("/n") then
-	    return
+        local name = author.name
+        if content:match("/n") then
+            return
         elseif content:sub(1,1) == "/" then -- 명령어이면
             -- 명령 기록을 남기고 실행한다
-	    content = content:sub(2,-1)
+            content = content:sub(2,-1)
             writeMessage(("\27[35mDiscord user '%s' executed '%s'\27[0m\n"):format(name,content))
             promise.spawn(proStdinWrite,{content,"\n"})
-	    promise.spawn(proStdinWrite,{command:format(name,content:gsub("\"","\\\"")),"\n"})
+            promise.spawn(proStdinWrite,{command:format(name,content:gsub("\"","\\\"")),"\n"})
         elseif member:hasRole(role) then
             writeMessage(("\27[35m[@%s] %s\27[0m\n"):format(name,content))
             promise.spawn(proStdinWrite,{tellraw:format(name,content:gsub("\"","\\\"")),"\n"})
