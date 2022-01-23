@@ -147,7 +147,7 @@ client:once('ready', function ()
             else -- 이미 버퍼에 값이 있다면 버퍼에 str 을 더한다
                 local lastbuffer = buffer[lenbuffer]
                 local newbuffer = lastbuffer .. str
-                if len((messageFormat):format(newbuffer)) > 2000 then
+                if len((messageFormat):format((lenbuffer == 1 and lastStr or "") .. newbuffer)) > 2000 then
                     buffer[lenbuffer+1] = str
                 else
                     buffer[lenbuffer] = newbuffer
