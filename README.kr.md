@@ -30,7 +30,7 @@
 git clone https://github.com/qwreey75/disbucket.git
 ```
 그리고 disbucket.json 파일을 서버 디렉터리에 만듭니다
-```json
+```jsonc
 {
   "token":"You bot token", // 디스코드 봇의 토큰입니다
   "roleId":"id", // 커맨드를 실행 할 수 있는 롤입니다
