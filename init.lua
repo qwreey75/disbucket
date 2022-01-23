@@ -7,22 +7,32 @@ local readline = require "readline"
 local discordia = require "discordia"
 local utf8 = require "utf8"
 local timer = require "timer"
+local uv = require "uv"
+local fs = require "fs"
+local json = require "json"
 
 -- make objects
 local client = discordia.Client() ---@type Client
 local editor = readline.Editor.new()
 local remove = table.remove
-local config = require "disbucket.config"
+local configFile = fs.readFileSync("disbucket.json")
+local config = configFile and json.decode(configFile) or require "./config"
 local len = utf8.len
 local rate = config.rate
 local messageFormat = config.messageFormat or "```ansi\n%s\n```"
 local tellraw = config.tellraw or "tellraw @a [{\"color\":\"green\",\"text\":\"[@%s]\"},{\"color\":\"white\",\"text\":\" %s\"}]"
+local command = config.command or "tellraw @a [{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]"
 
 -- spawn new process
 args[0] = nil
 remove(args,1)
 local process = spawn("java",{
-    stdio = {true,true,true};
+    stdio = {
+	-- uv.new_tty(0, true),
+	-- uv.new_tty(1, false),
+	-- uv.new_tty(2, false)
+	true,true,true
+    };
     cwd = "./";
     args = args;
 })
@@ -84,6 +94,15 @@ client:once('ready', function ()
         end
     end
 
+    local function bufferClear(now,callback,...)
+	for _,str in ipairs(now) do
+	    rawWriteMessage(str)
+	    timer.sleep(rate)
+	end
+	if callback then
+	    callback(...)
+	end
+    end
     local function writeMessage(str)
         for pattern,format in pairs(colors) do
             str = str:gsub(pattern,function (...)
@@ -102,10 +121,7 @@ client:once('ready', function ()
                 messageMutex:lock()
                 local now = buffer
                 buffer = {}
-                for _,nstr in pairs(now) do
-                    rawWriteMessage(nstr)
-                end
-                messageMutex:unlock()
+                promise.spawn(bufferClear,now,messageMutex.unlock,messageMutex)
             else -- 이미 버퍼에 값이 있다면 버퍼에 str 을 더한다
                 local lastbuffer = buffer[lenbuffer]
                 local newbuffer = lastbuffer .. str
@@ -140,12 +156,16 @@ client:once('ready', function ()
         message:delete() -- 유저 메시지를 지운다
         timer.setTimeout(rate,messageMutex.unlock,messageMutex) -- 디스코드 리밋 레이트 후 잠금 해재한다
 
-        if content:sub(1,1) == "/" then -- 명령어이면
+	local name = author.name
+	if content:match("/n") then
+	    return
+        elseif content:sub(1,1) == "/" then -- 명령어이면
             -- 명령 기록을 남기고 실행한다
-            writeMessage(("\27[35mDiscord user '%s' executed '%s'\27[0m\n"):format(member.nickname,content))
+	    content = content:sub(2,-1)
+            writeMessage(("\27[35mDiscord user '%s' executed '%s'\27[0m\n"):format(name,content))
             promise.spawn(proStdinWrite,{content,"\n"})
+	    promise.spawn(proStdinWrite,{command:format(name,content:gsub("\"","\\\"")),"\n"})
         elseif member:hasRole(role) then
-            local name = author.name
             writeMessage(("\27[35m[@%s] %s\27[0m\n"):format(name,content))
             promise.spawn(proStdinWrite,{tellraw:format(name,content:gsub("\"","\\\"")),"\n"})
         end
