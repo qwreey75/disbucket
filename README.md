@@ -41,9 +41,13 @@ And add disbucket.json on server directory
   "rate":20, // OPTION, You can set custom rate limit (Don't touch if you don't know)
   "messageFormat":"```ansi\n%s\n```", // OPTION, format of discord logging
   "tellraw":"[{\"color\":\"green\",\"text\":\"[@%s]\"},{\"color\":\"white\",\"text\":\" %s\"}]",
-            // OPTION, format of discord message on ingame
+            // OPTION, format of discord message on ingame (follow tellraw json format)
+            // first %s will replaced with username
+            // second %s will replaced with message
   "command":"[{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]"
-            // OPTION, format of discord command execution on ingame
+            // OPTION, format of discord command execution on ingame (follow tellraw json format)
+            // first %s will replaced with username
+            // second %s will replaced with command
 }
 ```
 (Your server directory will like be)
