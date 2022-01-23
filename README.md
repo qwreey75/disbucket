@@ -53,8 +53,13 @@ And add disbucket.json on server directory
             // OPTION, format of discord command execution on ingame (follow tellraw json format)
             // first %s will replaced with username
             // second %s will replaced with command
-  "program":"java" // OPTION, you can change program if you want,
-                   // Ex : node, lua, luvit, python, bash ... 
+  "program":"java", // OPTION, you can change program if you want,
+                    // Ex : node, lua, luvit, python, bash ...
+  "rawInput":false, // OPTION, If you use other program, you can send discord message
+                    // directly with no chagnes, this will enable all
+                    // messages to check role/permission
+  "noColor":false // OPTION, you can turn off colorfy output, it will help you use other program
+                  // (This option not remove stdout's ansi escape)
 }
 ```
 (Your server directory will like be)

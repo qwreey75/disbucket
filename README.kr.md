@@ -48,8 +48,12 @@ git clone https://github.com/qwreey75/disbucket.git
   "command":"[{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]",
             // 옵션, 디스코드의 커맨드 실행이 인게임에 표시될 포멧입니다, tellraw 문법을 따릅니다
             // 첫째 %s 는 이름으로 대채됩니다, 둘째 %s 는 명령어로 대채됩니다
-  "program":"java" // 옵션, 원하는 경우 프로그램을 다른것으로 바꿀 수도 있습니다
-                   // 예시 : node, lua, luvit, python, bash ...
+  "program":"java", // 옵션, 원하는 경우 프로그램을 다른것으로 바꿀 수도 있습니다
+                    // 예시 : node, lua, luvit, python, bash ...
+  "rawInput":false, // 옵션, 다른 프로그램을 이용하는 경우 디스코드 메시지를 그대로 입력시킬 수 있습니다
+                    // 이 옵션을 켜면 모든 메시지는 룰이 있어야만 처리됩니다
+  "noColor":false // 옵션, 출력에 색깔을 주는것을 끕니다
+                  // (이 옵션은 stdout 의 ANSI Escape 를 지우지 않습니다)
 }
 ```
 (올바른 서버 폴더의 내용은 이렇게 됩니다)

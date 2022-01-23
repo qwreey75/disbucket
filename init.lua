@@ -28,6 +28,8 @@ local editor = readline.Editor.new()
 local remove = table.remove
 local len = utf8.len
 local rate = config.rate or 20
+local rawInput = config.rawInput
+local noColor = config.noColor
 local messageFormat = config.messageFormat or "```ansi\n%s\n```"
 local tellraw = config.tellraw or "[{\"color\":\"green\",\"text\":\"[@%s]\"},{\"color\":\"white\",\"text\":\" %s\"}]"
 local command = config.command or "[{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]"
@@ -94,8 +96,8 @@ client:once('ready', function ()
     local buffer = {}
 
     local function rawWriteMessage(str) -- 리밋 레이트 생각 없이 2000 자 제한만 지켜 메시지 쓰기
-        str = str:gsub("`","\\`")
-        lastStr = lastStr .. str
+        str = str:gsub("`","\\`"):gsub("\r","")
+        lastStr = (lastStr .. str):gsub("\n.-\27%[2K","\n")
         local content = (messageFormat):format(lastStr)
         if lastMessage and len(content) <= 2000 then
             lastMessage:setContent(content)
@@ -115,10 +117,12 @@ client:once('ready', function ()
         end
     end
     local function writeMessage(str)
-        for pattern,format in pairs(colors) do
-            str = str:gsub(pattern,function (...)
-                return format:format(...)
-            end)
+        if not noColor then
+            for pattern,format in pairs(colors) do
+                str = str:gsub(pattern,function (...)
+                    return format:format(...)
+                end)
+            end
         end
 
         -- stdout
@@ -168,6 +172,13 @@ client:once('ready', function ()
         timer.setTimeout(rate,messageMutex.unlock,messageMutex) -- 디스코드 리밋 레이트 후 잠금 해재한다
 
         local name = author.name
+        if rawInput then
+            if member:hasRole(role) then
+                writeMessage(("\27[35mDiscord user '%s' executed '%s'\27[0m\n"):format(name,content))
+                promise.spawn(proStdinWrite,{content,"\n"})
+            end
+            return
+        end
         if content:match("/n") then
             return
         elseif content:sub(1,1) == "/" then -- 명령어이면
