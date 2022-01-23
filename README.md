@@ -18,6 +18,7 @@ it connect discord with minecraft server's log, chatting and command
 Type message in discord channel, it will displays on ingame and log  
 And you can use command with prefix /  
 *(Command execution will require role which you set)*  
+In game chat will displays on discord if it is not private message  
 Also it support ANSI color, so you can see color on discord and console  
 
 Automatic 2000 character cutting, editing last message to combine, avoid discord limit rate with buffer was implemented too
