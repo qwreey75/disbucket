@@ -22,6 +22,10 @@
 
 # Install  
 
+디스코드 봇은 이미 하나를 새로 만들었다고 가정합니다, 만약 만들지 않았더라면 [여기](https://discord.com/developers/applications)에서 만들고  
+`https://discord.com/oauth2/authorize?client_id=애플리케이션아이디&permissions=93184&scope=bot`  
+봇을 이런 링크로 초대하세요. 디스코드 봇 생성에 대한 자세한 설명은 인터넷을 참고하세요  
+
 먼저 luvit 최신 버전을 받습니다 [프리컴파일된 luvit 은 여기에서 얻을 수 있습니다](https://github.com/truemedian/luvit-bin/releases)  
 그 후 적절한 path 가 설정된 디렉터리에 넣습니다 (예시 : /usr/bin, 마크서버 폴더)  
 

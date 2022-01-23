@@ -24,6 +24,11 @@ Automatic 2000 character cutting, editing last message to combine, avoid discord
 
 # Install  
 
+This manual assumes you already have new discord bot, if you don't make new one, [make on here](https://discord.com/developers/applications)  
+> https://discord.com/oauth2/authorize?client_id=**YourBotAppId**&permissions=93184&scope=bot  
+And add it to your server with this link.  
+(If you want more information about creating bot, please just google it)  
+
 Download latest luvit on [here](https://github.com/truemedian/luvit-bin/releases)  
 and put it on a directory with the appropriate path (ex : /usr/bin, server directory)  
 
