@@ -226,7 +226,7 @@ client:once('ready', function ()
     client:on('messageDelete',discordDelete)
 
     -- print stdout and stderr
-    writeMessage("\27[32;1m[ 서버가 시작되었습니다 ]\27[0m\n")
+    writeMessage("\27[32;1m[ Server started ]\27[0m\n")
     local waitter = promise.waitter()
     waitter:add(promise.new(function ()
         for str in process.stdout.read do
@@ -254,7 +254,7 @@ client:once('ready', function ()
     -- exit
     waitter:wait()
     process.waitExit()
-    writeMessage("\27[31;1m[ 서버가 종료되었습니다 ]\27[0m\n")
+    writeMessage("\27[31;1m[ Server closed ]\27[0m\n")
     stdoutWrite(stdout,"\27[2K\r\27[0m[ Process Stopped ]\n")
     timer.setTimeout(1000,os.exit)
 end)
