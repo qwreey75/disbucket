@@ -32,7 +32,7 @@ And clone this repo into your server directory
 git clone https://github.com/qwreey75/disbucket.git
 ```
 And add disbucket.json on server directory
-```json
+```jsonc
 {
   "token":"You bot token", // Token of your discord bot
   "roleId":"id", // Which role can execute command
