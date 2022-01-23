@@ -49,10 +49,12 @@ And add disbucket.json on server directory
             // OPTION, format of discord message on ingame (follow tellraw json format)
             // first %s will replaced with username
             // second %s will replaced with message
-  "command":"[{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]"
+  "command":"[{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]",
             // OPTION, format of discord command execution on ingame (follow tellraw json format)
             // first %s will replaced with username
             // second %s will replaced with command
+  "program":"java" // OPTION, you can change program if you want,
+                   // Ex : node, lua, luvit, python, bash ... 
 }
 ```
 (Your server directory will like be)
@@ -71,6 +73,8 @@ luvit disbucket -jar ...
 #               ^ this is same with java
 #                 arguments, you can set
 #                 -Xmx -nogui -Xms ... too
+#                 (All arguments will be
+#                  passed into java)
 ```
 
 # Dependent

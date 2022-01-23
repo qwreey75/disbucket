@@ -10,12 +10,22 @@ local timer = require "timer"
 local fs = require "fs"
 local json = require "json"
 
+-- load config file
+local configFile = fs.readFileSync("disbucket.json")
+local config = configFile and json.decode(configFile)
+if not config then
+    local pass
+    pass,config = pcall(require,"./config")
+    if not pass then -- config file not found?
+        prettyPrint.stdout:write"Could not load config file. Please check your configuration file and try again."
+        os.exit(1) -- exit with error code
+    end
+end
+
 -- make objects
 local client = discordia.Client() ---@type Client
 local editor = readline.Editor.new()
 local remove = table.remove
-local configFile = fs.readFileSync("disbucket.json")
-local config = configFile and json.decode(configFile) or require "./config"
 local len = utf8.len
 local rate = config.rate
 local messageFormat = config.messageFormat or "```ansi\n%s\n```"
@@ -27,7 +37,7 @@ command = "tellraw @a " .. command
 -- spawn new process
 args[0] = nil
 remove(args,1)
-local process = spawn("java",{
+local process = spawn(config.program or "java",{
     stdio = {
         -- uv.new_tty(0, true),
         -- uv.new_tty(1, false),

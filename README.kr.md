@@ -45,9 +45,11 @@ git clone https://github.com/qwreey75/disbucket.git
   "tellraw":"[{\"color\":\"green\",\"text\":\"[@%s]\"},{\"color\":\"white\",\"text\":\" %s\"}]",
             // 옵션, 디스코드 메시지가 인게임에 표시될 포멧입니다, tellraw 문법을 따릅니다
             // 첫째 %s 는 이름으로 대채됩니다, 둘째 %s 는 메시지로 대채됩니다
-  "command":"[{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]"
+  "command":"[{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]",
             // 옵션, 디스코드의 커맨드 실행이 인게임에 표시될 포멧입니다, tellraw 문법을 따릅니다
             // 첫째 %s 는 이름으로 대채됩니다, 둘째 %s 는 명령어로 대채됩니다
+  "program":"java" // 옵션, 원하는 경우 프로그램을 다른것으로 바꿀 수도 있습니다
+                   // 예시 : node, lua, luvit, python, bash ...
 }
 ```
 (올바른 서버 폴더의 내용은 이렇게 됩니다)
@@ -65,7 +67,8 @@ git clone https://github.com/qwreey75/disbucket.git
 luvit disbucket -jar ...
 #               ^ 일반적으로 java 에 인자를
 #                 넘기던것 처럼 인자를 넣어
-#                 줍니다
+#                 줍니다, 모든 인자는 java
+#                 에 넘어갑니다
 ```
 를 입력해주면 됩니다, java -Xmx8G -Xms2G -jar paper.jar 이 원래 서버 여는데 쓰던 명령어라면  
 `luvit disbucket -Xmx8G -Xms2G -jar paper.jar` 을 입력해주면 됩니다  
