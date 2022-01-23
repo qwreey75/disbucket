@@ -52,8 +52,10 @@ git clone https://github.com/qwreey75/disbucket.git
                     // 예시 : node, lua, luvit, python, bash ...
   "rawInput":false, // 옵션, 다른 프로그램을 이용하는 경우 디스코드 메시지를 그대로 입력시킬 수 있습니다
                     // 이 옵션을 켜면 모든 메시지는 룰이 있어야만 처리됩니다
-  "noColor":false // 옵션, 출력에 색깔을 주는것을 끕니다
-                  // (이 옵션은 stdout 의 ANSI Escape 를 지우지 않습니다)
+  "noColor":false, // 옵션, 출력에 색깔을 주는것을 끕니다
+                   // (이 옵션은 stdout 의 ANSI Escape 를 지우지 않습니다)
+  "stop":"stop" // 옵션, 프로그램이 다른 종료 명령을 사용한다면 여기에 그 명령을 입력할 수 있습니다
+                // ctrl+C 동작에서 사용됩니다
 }
 ```
 (올바른 서버 폴더의 내용은 이렇게 됩니다)

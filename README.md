@@ -58,8 +58,10 @@ And add disbucket.json on server directory
   "rawInput":false, // OPTION, If you use other program, you can send discord message
                     // directly with no chagnes, this will enable all
                     // messages to check role/permission
-  "noColor":false // OPTION, you can turn off colorfy output, it will help you use other program
-                  // (This option not remove stdout's ansi escape)
+  "noColor":false, // OPTION, you can turn off colorfy output, it will help you use other program
+                   // (This option not remove stdout's ansi escape)
+  "stop":"stop" // OPTION, If your program uses other stop command, you can use these command
+                // it will executed when ctrl+C pressed
 }
 ```
 (Your server directory will like be)

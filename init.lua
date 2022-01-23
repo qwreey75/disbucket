@@ -30,6 +30,7 @@ local len = utf8.len
 local rate = config.rate or 20
 local rawInput = config.rawInput
 local noColor = config.noColor
+local stop = config.stop or "stop"
 local messageFormat = config.messageFormat or "```ansi\n%s\n```"
 local tellraw = config.tellraw or "[{\"color\":\"green\",\"text\":\"[@%s]\"},{\"color\":\"white\",\"text\":\" %s\"}]"
 local command = config.command or "[{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]"
@@ -54,7 +55,7 @@ local process = spawn(config.program or "java",{
 local proStdinWrite = process.stdin.write
 local function onCommand(err,line,out)
     if out == "SIGINT in readLine" then
-        promise.spawn(proStdinWrite,"stop\n")
+        promise.spawn(proStdinWrite,{stop,"\n"})
         return
     end
     promise.spawn(proStdinWrite,{line,"\n"})
@@ -102,7 +103,7 @@ client:once('ready', function ()
         if lastMessage and len(content) <= 2000 then
             lastMessage:setContent(content)
         else
-            lastStr = str
+            lastStr = str:gsub("\n.-\27%[2K","\n"):gsub("\27%[2K","")
             lastMessage = channel:send((messageFormat):format(str))
         end
     end
