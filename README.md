@@ -63,7 +63,8 @@ And add disbucket.json on server directory
                    // (This option not remove stdout's ansi escape)
   "stop":"stop", // OPTION, If your program uses other stop command, you can use these command
                  // it will executed when ctrl+C pressed
-  "prompt":"> " // OPTION, prompt string, you can change this if you need
+  "prompt":"> ", // OPTION, prompt string, you can change this if you need
+  "maxLength":2000 // OPTION, max length of message (for logging)
 }
 ```
 (Your server directory will like be)

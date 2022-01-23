@@ -57,7 +57,8 @@ git clone https://github.com/qwreey75/disbucket.git
                    // (이 옵션은 stdout 의 ANSI Escape 를 지우지 않습니다)
   "stop":"stop", // 옵션, 프로그램이 다른 종료 명령을 사용한다면 여기에 그 명령을 입력할 수 있습니다
                  // ctrl+C 동작에서 사용됩니다
-  "prompt":"> " // 옵션, prompt 문자열 입니다, 필요에 따라 바꿀 수 있습니다
+  "prompt":"> ", // 옵션, prompt 문자열 입니다, 필요에 따라 바꿀 수 있습니다
+  "maxLength":2000 // 옵션, 메시지의 최대 길이를 지정합니다
 }
 ```
 (올바른 서버 폴더의 내용은 이렇게 됩니다)
