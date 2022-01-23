@@ -31,6 +31,31 @@ And clone this repo into your server directory
 ```sh
 git clone https://github.com/qwreey75/disbucket.git
 ```
+And add disbucket.json on server directory
+```json
+{
+  "token":"You bot token", // Token of your discord bot
+  "roleId":"id", // Which role can execute command
+  "guildId":"id", // Where guild be logged / read message
+  "channelId":"id", // Where channel be logged / read message
+  "rate":20, // OPTION, You can set custom rate limit (Don't touch if you don't know)
+  "messageFormat":"```ansi\n%s\n```", // OPTION, format of discord logging
+  "tellraw":"[{\"color\":\"green\",\"text\":\"[@%s]\"},{\"color\":\"white\",\"text\":\" %s\"}]",
+            // OPTION, format of discord message on ingame
+  "command":"[{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]"
+            // OPTION, format of discord command execution on ingame
+}
+```
+(Your server directory will like be)
+```sh
+ - Minecraft Server
+ | - Bucket.jar (Paper, Spigot ...)
+ | - disbucket.json (disbucket settings)
+ | - disbucket (disbucket folder)
+ | - luvit.exe or luvit (option, you can put it on
+ |                       other path)
+ | - ... (world , permission , ...)
+```
 And run this on your server directory  
 ```sh
 luvit disbucket -jar ...
