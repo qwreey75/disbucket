@@ -5,7 +5,6 @@ local spawn = require "coro-spawn"
 local prettyPrint = require "pretty-print"
 local readline = require "readline"
 local discordia = require "discordia"
--- local utf8 = require "utf8"
 local timer = require "timer"
 local fs = require "fs"
 local json = require "json"
@@ -118,10 +117,12 @@ client:once('ready', function ()
     local buffer = {}
     local writeLock = mutex.new()
     local function writeMsg(str)
-        for pattern,format in pairs(colors) do
-            str = str:gsub(pattern,function (...)
-                return format:format(...)
-            end)
+        if not noColor then
+            for pattern,format in pairs(colors) do
+                str = str:gsub(pattern,function (...)
+                    return format:format(...)
+                end)
+            end
         end
 
         stdoutWrite(stdout,{"\27%[2K\r",str,prompt})
@@ -148,7 +149,6 @@ client:once('ready', function ()
                         content = content .. chunk
                     end
                 end
-                -- print(len(content))
                 writeMsgRaw(content)
                 timer.setTimeout(rate,writeLock.unlock,writeLock)
             end
