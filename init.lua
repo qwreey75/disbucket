@@ -24,7 +24,9 @@ end
 -- make objects
 local date = discordia.Date ---@type Date
 local discordia_enchent = require "discordia_enchent"
-local client = discordia.Client() ---@type Client
+local client = discordia.Client{
+    logLevel = 1;
+} ---@type Client
 discordia_enchent.inject(client)
 local editor = readline.Editor.new()
 local remove = table.remove
