@@ -234,4 +234,7 @@ client:once('ready', function ()
     process.waitExit()
     writeMsg("\27[31;1m[ Server closed ]\27[0m\n")
     stdoutWrite(stdout,"\n")
+    timer.setTimeout(1000,os.exit)
 end)
+
+client:run(("Bot %s"):format(config.token))
