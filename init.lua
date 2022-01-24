@@ -4,7 +4,7 @@ local mutex = require "mutex" ---@module "deps/mutex/mutex"
 local spawn = require "coro-spawn"
 local prettyPrint = require "pretty-print"
 local readline = require "readline"
-local discordia = require "discordia"
+local discordia = require "discordia" ---@class discordia
 local timer = require "timer"
 local fs = require "fs"
 local json = require "json"
@@ -22,6 +22,7 @@ if not config then
 end
 
 -- make objects
+local date = discordia.Date ---@type Date
 local discordia_enchent = require "discordia_enchent"
 local client = discordia.Client() ---@type Client
 discordia_enchent.inject(client)
@@ -41,6 +42,12 @@ local tellraw = config.tellraw or "[{\"color\":\"green\",\"text\":\"[@%s]\"},{\"
 local command = config.command or "[{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]"
 tellraw = "tellraw @a " .. tellraw
 command = "tellraw @a " .. command
+local time = os.time;
+local diff = time() - time(os.date("!*t"));
+local function posixTime()
+	return time() - diff;
+end;
+local hourInSec = 60*60
 
 -- spawn new process
 args[0] = nil
@@ -109,6 +116,11 @@ client:once('ready', function ()
             lastMessage = channel:send(messageFormat:format(str))
         else
             lastStr = newStr
+            if lastMessage.createdAt <= posixTime() - hourInSec then
+                lastMessage:delete()
+                lastMessage = channel:send(content)
+                return
+            end
             lastMessage:setContent(content)
         end
     end
