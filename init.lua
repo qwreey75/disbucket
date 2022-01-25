@@ -87,8 +87,8 @@ local colors = {
     ["(%[.- INFO%]: )(%[.+%])(.-)"] = "%s\27[47;1m%s\27[0m%s";
 }
 local colorsAfter = {
-    ["%d+%.%d+%.%d+%.%d+:%d+"] = "\27[32;1m[ IP-Port ]\27[0m";
-    ["%d+%.%d+%.%d+%.%d+"] = "\27[32;1m[ IP ]\27[0m";
+    ["%d+%.%d+%.%d+%.%d+:%d+"] = "\27[32;1m( IP-Port )\27[0m";
+    ["%d+%.%d+%.%d+%.%d+"] = "\27[32;1m( IP )\27[0m";
     [".-issued server command: /w .-"] = "\27[32;1m[ Private Message ]\27[0m";
     [".-issued server command: /msg .-"] = "\27[32;1m[ Private Message ]\27[0m";
     [".-issued server command: /tell .-"] = "\27[32;1m[ Private Message ]\27[0m";
