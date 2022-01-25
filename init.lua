@@ -80,11 +80,20 @@ local stdoutWrite = stdout.write
 
 -- colors
 local colors = {
-    [".-issued server command: /w .-"] = "\27[32;1m[ Private Message ]\27[0m",
-    [".-issued server command: /msg .-"] = "\27[32;1m[ Private Message ]\27[0m",
-    [".-issued server command: /tell .-"] = "\27[32;1m[ Private Message ]\27[0m",
-    [".-issued server command: /teammsg .-"] = "\27[32;1m[ Private Message ]\27[0m",
-    [".-issued server command: /tm .-"] = "\27[32;1m[ Private Message ]\27[0m",
+    ["%[.-:.-:.- WARN%]:.-"] = "\27[33;1m%s\27[0m";
+    [".-issued server command:.-"] = "\27[32;1m%s\27[0m";
+    [".-joined the game.-"] = "\27[33;1m%s\27[0m";
+    [".-left the game.-"] = "\27[33;1m%s\27[0m";
+    ["(%[.- INFO%]: )(%[.+%])(.-)"] = "%s\27[47;1m%s\27[0m%s";
+}
+local colorsAfter = {
+    ["%d+%.%d+%.%d+%.%d+:%d+"] = "\27[32;1m[ IP-Port ]\27[0m";
+    ["%d+%.%d+%.%d+%.%d+"] = "\27[32;1m[ IP ]\27[0m";
+    [".-issued server command: /w .-"] = "\27[32;1m[ Private Message ]\27[0m";
+    [".-issued server command: /msg .-"] = "\27[32;1m[ Private Message ]\27[0m";
+    [".-issued server command: /tell .-"] = "\27[32;1m[ Private Message ]\27[0m";
+    [".-issued server command: /teammsg .-"] = "\27[32;1m[ Private Message ]\27[0m";
+    [".-issued server command: /tm .-"] = "\27[32;1m[ Private Message ]\27[0m";
     ["%[.-:.-:.- WARN%]:.-"] = "\27[33;1m%s\27[0m";
     [".-issued server command:.-"] = "\27[32;1m%s\27[0m";
     [".-joined the game.-"] = "\27[33;1m%s\27[0m";
@@ -132,14 +141,22 @@ client:once('ready', function ()
     local writeLock = mutex.new()
     local function writeMsg(str)
         if not noColor then
+            local display = str
             for pattern,format in pairs(colors) do
+                display = display:gsub(pattern,function (...)
+                    return format:format(...)
+                end)
+            end
+            stdoutWrite(stdout,{"\27%[2K\r",display,prompt})
+            for pattern,format in pairs(colorsAfter) do
                 str = str:gsub(pattern,function (...)
                     return format:format(...)
                 end)
             end
+        else
+            stdoutWrite(stdout,{"\27%[2K\r",str,prompt})
         end
 
-        stdoutWrite(stdout,{"\27%[2K\r",str,prompt})
         editor:refreshLine()
         str = str:gsub("`","\\`")
 
