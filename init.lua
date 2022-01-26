@@ -219,12 +219,16 @@ client:once('ready', function ()
         if content:match("/n") then
             return
         elseif content:sub(1,1) == "/" then -- 명령어이면
-            -- 명령 기록을 남기고 실행한다
-            content = content:sub(2,-1)
-            writeMsg(("\27[35mDiscord user '%s' executed '%s'\27[0m\n"):format(name,content))
-            promise.spawn(proStdinWrite,{content,"\n"})
-            promise.spawn(proStdinWrite,{command:format(name,content:gsub("\\","\\\\"):gsub("\"","\\\"")),"\n"})
-        elseif member:hasRole(role) then
+            if member:hasRole(role) then
+	        -- 명령 기록을 남기고 실행한다
+                content = content:sub(2,-1)
+                writeMsg(("\27[35mDiscord user '%s' executed '%s'\27[0m\n"):format(name,content))
+                promise.spawn(proStdinWrite,{content,"\n"})
+                promise.spawn(proStdinWrite,{command:format(name,content:gsub("\\","\\\\"):gsub("\"","\\\"")),"\n"})
+	    else
+	        writeMsg(("\27[31mYou don't have permission to execute that\27[0m\n"):format(name,content))
+            end
+        else
             writeMsg(("\27[35m[@%s] %s\27[0m\n"):format(name,content))
             promise.spawn(proStdinWrite,{tellraw:format(name,content:gsub("\\","\\\\"):gsub("\"","\\\"")),"\n"})
         end
