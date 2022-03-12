@@ -4,7 +4,7 @@ local mutex = require "mutex" ---@module "deps/mutex/mutex"
 local spawn = require "coro-spawn"
 local prettyPrint = require "pretty-print"
 local readline = require "readline"
-local discordia = require "discordia"
+local discordia = require "discordia" ---@class discordia
 local timer = require "timer"
 local fs = require "fs"
 local json = require "json"
@@ -22,8 +22,11 @@ if not config then
 end
 
 -- make objects
+local date = discordia.Date ---@type Date
 local discordia_enchent = require "discordia_enchent"
-local client = discordia.Client() ---@type Client
+local client = discordia.Client{
+    logLevel = 1;
+} ---@type Client
 discordia_enchent.inject(client)
 local editor = readline.Editor.new()
 local remove = table.remove
@@ -41,6 +44,12 @@ local tellraw = config.tellraw or "[{\"color\":\"green\",\"text\":\"[@%s]\"},{\"
 local command = config.command or "[{\"color\":\"gray\",\"text\":\"[@%s] Used : %s\"}]"
 tellraw = "tellraw @a " .. tellraw
 command = "tellraw @a " .. command
+local time = os.time;
+local diff = time() - time(os.date("!*t"));
+local function posixTime()
+	return time() - diff;
+end;
+local hourInSec = 60*60
 
 -- spawn new process
 args[0] = nil
@@ -71,11 +80,20 @@ local stdoutWrite = stdout.write
 
 -- colors
 local colors = {
-    [".-issued server command: /w .-"] = "\27[32;1m[ Private Message ]\27[0m",
-    [".-issued server command: /msg .-"] = "\27[32;1m[ Private Message ]\27[0m",
-    [".-issued server command: /tell .-"] = "\27[32;1m[ Private Message ]\27[0m",
-    [".-issued server command: /teammsg .-"] = "\27[32;1m[ Private Message ]\27[0m",
-    [".-issued server command: /tm .-"] = "\27[32;1m[ Private Message ]\27[0m",
+    ["%[.-:.-:.- WARN%]:.-"] = "\27[33;1m%s\27[0m";
+    [".-issued server command:.-"] = "\27[32;1m%s\27[0m";
+    [".-joined the game.-"] = "\27[33;1m%s\27[0m";
+    [".-left the game.-"] = "\27[33;1m%s\27[0m";
+    ["(%[.- INFO%]: )(%[.+%])(.-)"] = "%s\27[47;1m%s\27[0m%s";
+}
+local colorsAfter = {
+    ["%d+%.%d+%.%d+%.%d+:%d+"] = "\27[32;1m( IP-Port )\27[0m";
+    ["%d+%.%d+%.%d+%.%d+"] = "\27[32;1m( IP )\27[0m";
+    [".-issued server command: /w .-"] = "\27[32;1m[ Private Message ]\27[0m";
+    [".-issued server command: /msg .-"] = "\27[32;1m[ Private Message ]\27[0m";
+    [".-issued server command: /tell .-"] = "\27[32;1m[ Private Message ]\27[0m";
+    [".-issued server command: /teammsg .-"] = "\27[32;1m[ Private Message ]\27[0m";
+    [".-issued server command: /tm .-"] = "\27[32;1m[ Private Message ]\27[0m";
     ["%[.-:.-:.- WARN%]:.-"] = "\27[33;1m%s\27[0m";
     [".-issued server command:.-"] = "\27[32;1m%s\27[0m";
     [".-joined the game.-"] = "\27[33;1m%s\27[0m";
@@ -109,6 +127,11 @@ client:once('ready', function ()
             lastMessage = channel:send(messageFormat:format(str))
         else
             lastStr = newStr
+            if lastMessage.createdAt <= posixTime() - hourInSec then
+                lastMessage:delete()
+                lastMessage = channel:send(content)
+                return
+            end
             lastMessage:setContent(content)
         end
     end
@@ -118,14 +141,22 @@ client:once('ready', function ()
     local writeLock = mutex.new()
     local function writeMsg(str)
         if not noColor then
+            local display = str
             for pattern,format in pairs(colors) do
+                display = display:gsub(pattern,function (...)
+                    return format:format(...)
+                end)
+            end
+            stdoutWrite(stdout,{"\27%[2K\r",display,prompt})
+            for pattern,format in pairs(colorsAfter) do
                 str = str:gsub(pattern,function (...)
                     return format:format(...)
                 end)
             end
+        else
+            stdoutWrite(stdout,{"\27%[2K\r",str,prompt})
         end
 
-        stdoutWrite(stdout,{"\27%[2K\r",str,prompt})
         editor:refreshLine()
         str = str:gsub("`","\\`")
 
@@ -188,12 +219,16 @@ client:once('ready', function ()
         if content:match("/n") then
             return
         elseif content:sub(1,1) == "/" then -- 명령어이면
-            -- 명령 기록을 남기고 실행한다
-            content = content:sub(2,-1)
-            writeMsg(("\27[35mDiscord user '%s' executed '%s'\27[0m\n"):format(name,content))
-            promise.spawn(proStdinWrite,{content,"\n"})
-            promise.spawn(proStdinWrite,{command:format(name,content:gsub("\\","\\\\"):gsub("\"","\\\"")),"\n"})
-        elseif member:hasRole(role) then
+            if member:hasRole(role) then
+	        -- 명령 기록을 남기고 실행한다
+                content = content:sub(2,-1)
+                writeMsg(("\27[35mDiscord user '%s' executed '%s'\27[0m\n"):format(name,content))
+                promise.spawn(proStdinWrite,{content,"\n"})
+                promise.spawn(proStdinWrite,{command:format(name,content:gsub("\\","\\\\"):gsub("\"","\\\"")),"\n"})
+	    else
+	        writeMsg(("\27[31mYou don't have permission to execute that\27[0m\n"):format(name,content))
+            end
+        else
             writeMsg(("\27[35m[@%s] %s\27[0m\n"):format(name,content))
             promise.spawn(proStdinWrite,{tellraw:format(name,content:gsub("\\","\\\\"):gsub("\"","\\\"")),"\n"})
         end

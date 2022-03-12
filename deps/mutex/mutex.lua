@@ -50,7 +50,7 @@ function mutex:isLocked()
 end
 
 function mutex.new()
-    local new = {}; ---@type mutex
+    local new = {};
     setmetatable(new,mutex);
     return new;
 end
